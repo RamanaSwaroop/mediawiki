@@ -1,0 +1,29 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: TerraformInstaller@0
+  displayName: 'Install Terraform latest'
+
+- task: TerraformTaskV2@2
+  displayName: 'Terraform : azurerm - init'
+  inputs:
+    backendServiceArm: 'packer-service-connection'
+    backendAzureRmResourceGroupName: 'mediawiki-devops-rg'
+    backendAzureRmStorageAccountName: mediawikidevopsst
+    backendAzureRmContainerName: tfstate
+    backendAzureRmKey: ado.tfstate
+
+- task: TerraformTaskV2@2
+  displayName: 'Terraform : azurerm - destroy'
+  inputs:
+    command: destroy
+    environmentServiceNameAzureRM: 'packer-service-connection'

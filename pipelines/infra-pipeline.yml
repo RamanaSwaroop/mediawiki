@@ -1,0 +1,45 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+variables:
+ - group: packer-image-build-variables
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: TerraformInstaller@0
+  displayName: 'Install Terraform latest'
+
+- task: TerraformTaskV2@2
+  displayName: 'Terraform : azurerm - init'
+  inputs:
+    backendServiceArm: 'packer-service-connection'
+    backendAzureRmResourceGroupName: 'mediawiki-devops-rg'
+    backendAzureRmStorageAccountName: mediawikidevopsst
+    backendAzureRmContainerName: tfstate
+    backendAzureRmKey: ado1.tfstate
+
+- task: TerraformTaskV2@2
+  displayName: 'Terraform : azurerm - validate'
+  inputs:
+    command: validate
+
+- task: TerraformTaskV2@2
+  displayName: 'Terraform : azurerm - plan'
+  inputs:
+    command: plan
+    environmentServiceNameAzureRM: 'packer-service-connection'
+    backendServiceArm: 'packer-service-connection'
+
+- task: TerraformTaskV2@2
+  displayName: 'Terraform : azurerm - apply'
+  inputs:
+    command: apply
+    commandOptions: '-auto-approve'
+    environmentServiceNameAzureRM: 'packer-service-connection'    

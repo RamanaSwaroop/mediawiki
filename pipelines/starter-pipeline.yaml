@@ -1,0 +1,35 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- script: cat /etc/*-release
+  displayName: 'Linux distribution'
+
+- script: |
+    echo "Structure of work folder of this pipeline:"
+    tree $(Agent.WorkFolder)\1 /f
+
+    echo "Build.ArtifactStagingDirectory:" 
+
+    echo "$(Build.ArtifactStagingDirectory)"
+
+    echo "Build.BinariesDirectory:" 
+
+    echo "$(Build.BinariesDirectory)"
+
+    echo "Build.SourcesDirectory:"
+
+    echo "$(Build.SourcesDirectory)"
+
+    echo "System.DefaultWorkingDirectory:"
+
+    echo "$(System.DefaultWorkingDirectory)"
+  displayName: 'folder structure'
