@@ -38,7 +38,7 @@
 
 2. Create pipeline.
 
-3. Update variables in *deployment.auto.tfvars* file. 
+3. Update variables in *deployment.auto.tfvars* file.
 
 4. Edit *infra-pipeline.yaml* with storage account name for storing tfstate file. Update service connection in the same file.
 

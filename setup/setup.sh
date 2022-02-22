@@ -14,5 +14,11 @@ key=$(az storage account keys list --resource-group $devopsrg --account-name $st
 # Create blob container
 az storage container create --name $container --account-name $stname --account-key $key
 
+rand=$RANDOM
+name=devopskv$rand
+echo $name 
+az keyvault create -n $name -g $devopsrg -l $location --enable-for-template-deployment $true 
+#az keyvault set-policy -n $name --application-id 
+
 # az sig create -g mediawiki-image-rg --gallery-name mediawikisig
 

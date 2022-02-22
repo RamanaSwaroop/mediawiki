@@ -40,7 +40,7 @@ source "azure-arm" "this" {
   image_publisher                   = "RedHat"
   image_sku                         = "8.1"
   location                          = "East US"
-  managed_image_name                = "image-mediawiki-v1.34-0.0.3"
+  managed_image_name                = "${var.image_name}"
   managed_image_resource_group_name = "mediawiki-devops-rg"
   os_type                           = "Linux"
   subscription_id                   = "${var.subscription_id}"
