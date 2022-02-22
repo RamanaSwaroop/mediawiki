@@ -18,13 +18,3 @@ provider "azurerm" {
   #subscription_id = var.subscription_id
   features {}
 }
-
-# data "terraform_remote_state" "state" {
-#   backend = "azurerm"
-#   config = {
-#     resource_group_name  = "mediawiki-devops-rg"
-#     storage_account_name = "mediawikidevopsst"
-#     container_name       = "tfstate"
-#     key                  = "test.tfstate"
-#   }
-# }

@@ -2,6 +2,11 @@
 
 data "azurerm_client_config" "current" {}
 
+data "azurerm_image" "this" {
+  name = var.vm_image_id
+  resource_group_name = var.image_rg
+}
+
 # Create network interface
 resource "azurerm_network_interface" "nic" {
   name                = join("", [var.vm_name, "-nic"])
@@ -103,7 +108,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
     disk_size_gb         = 64
     storage_account_type = "Standard_LRS"
   }
-  source_image_id = var.vm_image_id
+  source_image_id = data.azurerm_image.this.id
   identity {
     type = "SystemAssigned"
   }
