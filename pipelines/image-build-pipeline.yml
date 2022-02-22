@@ -4,38 +4,37 @@
 # https://aka.ms/yaml
 
 trigger:
-- master
+  - master
 
 variables:
- - group: packer-image-build-variables
- - group: build-env-variables
- - template: image-variables.yaml
+  - group: packer-image-build-variables
+  - group: build-env-variables
+  - template: image-variables.yaml
 
 pool:
   vmImage: ubuntu-latest
 
 steps:
-- task: PackerTool@0
-  displayName: 'Use Packer latest'
+  - task: PackerTool@0
+    displayName: "Use Packer latest"
 
-- task: Packer@1
-  displayName: 'Packer validate'
-  inputs:
-    azureSubscription: 'packer-service-connection'
-    templatePath: '$(System.DefaultWorkingDirectory)/packer-code/mediawiki.pkr.hcl'
-    command: validate
-    variables: |
-     image_name=${image_name}
-     image_rg=${image_rg}
+  - task: Packer@1
+    displayName: "Packer validate"
+    inputs:
+      azureSubscription: "packer-service-connection"
+      templatePath: "$(System.DefaultWorkingDirectory)/packer-code/mediawiki.pkr.hcl"
+      command: validate
+      variables: |
+        image_name=${{variables.image_name}}
+        image_rg=${{variables.image_rg}}
 
-- task: Packer@1
-  displayName: 'Packer build'
-  inputs:
-    azureSubscription: 'packer-service-connection'
-    templatePath: '$(System.DefaultWorkingDirectory)/packer-code/mediawiki.pkr.hcl'
-    command: build
-    force: true
-    variables: |
-     image_name=${image_name}
-     image_rg=${image_rg}
-    
+  - task: Packer@1
+    displayName: "Packer build"
+    inputs:
+      azureSubscription: "packer-service-connection"
+      templatePath: "$(System.DefaultWorkingDirectory)/packer-code/mediawiki.pkr.hcl"
+      command: build
+      force: true
+      variables: |
+        image_name=${{variables.image_name}}
+        image_rg=${{variables.image_rg}}
