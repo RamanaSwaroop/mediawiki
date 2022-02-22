@@ -25,7 +25,7 @@ subnet_address_prefix = ["10.10.0.0/24"]
 
 subnet_name = "vm-snet"
 
-vm_image_id = "mediawiki-devops-rg"
+vm_image_id = "image-mediawiki-v1.34-0.0.3"
 
 image_rg = "mediawiki-devops-rg"
 

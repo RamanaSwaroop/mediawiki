@@ -3,7 +3,7 @@
 data "azurerm_client_config" "current" {}
 
 data "azurerm_image" "this" {
-  name = var.vm_image_id
+  name                = var.vm_image_id
   resource_group_name = var.image_rg
 }
 
