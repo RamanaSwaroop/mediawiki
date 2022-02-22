@@ -41,7 +41,7 @@ source "azure-arm" "this" {
   image_sku                         = "8.1"
   location                          = "East US"
   managed_image_name                = "${var.image_name}"
-  managed_image_resource_group_name = "mediawiki-devops-rg"
+  managed_image_resource_group_name = "${var.image_rg}"
   os_type                           = "Linux"
   subscription_id                   = "${var.subscription_id}"
   tenant_id                         = "${var.tenant_id}"
