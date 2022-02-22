@@ -33,3 +33,11 @@ steps:
 
     echo "$(System.DefaultWorkingDirectory)"
   displayName: 'folder structure'
+
+- task: AzureCLI@2
+  displayName: Azure CLI
+  inputs: 
+    azureSubscription: 'packer-service-connection'
+    scriptType: bash
+    scriptLocation: 'scriptPath'
+    scriptPath: './setup/setup.sh'

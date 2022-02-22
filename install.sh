@@ -6,11 +6,11 @@ useradd wiki -s /bin/bash -g wiki
 
 # Generate password and push it to keyvault - avoid special characters
 # Requires access on keyvault
-db_root_password=$(openssl rand -base64 12)
+# db_root_password=$(openssl rand -base64 12)
 
 k=$(curl --silent 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fvault.azure.net' -H Metadata:true | jq --raw-output -r '.access_token')
 
-curl --silent --request PUT https://$kv.vault.azure.net/secrets/wiki?api-version=7.2 -H "Authorization: Bearer $k" -H "Content-Type: application/json" -d "{'value':'${db_root_password}'}"
+db_root_password=$(curl --silent --request GET https://$kv.vault.azure.net/secrets/wiki?api-version=7.2 -H "Authorization: Bearer $k" | jq --raw-output -r '.value')
 
 mysql --user=root <<_EOF_
   UPDATE mysql.user SET Password=PASSWORD('${db_root_password}') WHERE User='root';

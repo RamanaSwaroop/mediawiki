@@ -70,6 +70,21 @@ resource "azurerm_key_vault_secret" "secret" {
   ]
 }
 
+resource "random_password" "this" {
+  length           = 16
+  special          = true
+  override_special = "(+%><"
+}
+
+resource "azurerm_key_vault_secret" "db-secret" {
+  name         = "wiki"
+  value        = random_password.this.result
+  key_vault_id = azurerm_key_vault.kv.id
+  depends_on = [
+    azurerm_key_vault_access_policy.policy
+  ]
+}
+
 # Create VM
 resource "azurerm_linux_virtual_machine" "vm" {
   name                = var.vm_name
@@ -123,7 +138,8 @@ resource "azurerm_virtual_machine_extension" "custom_script" {
   SETTINGS
 
   depends_on = [
-    azurerm_key_vault_access_policy.vmpolicy
+    azurerm_key_vault_access_policy.vmpolicy,
+    azurerm_key_vault_secret.db-secret
   ]
 }
 
