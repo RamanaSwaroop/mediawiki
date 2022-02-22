@@ -37,8 +37,6 @@ steps:
       command: plan
       environmentServiceNameAzureRM: "packer-service-connection"
       backendServiceArm: "packer-service-connection"
-      variables:
-         subscription_id=${{variables.subscription_id}}
 
   - task: TerraformTaskV2@2
     displayName: "Terraform : azurerm - apply"
