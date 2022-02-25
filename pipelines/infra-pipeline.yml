@@ -9,40 +9,49 @@ pool:
 
 stages:
   - stage: Init
-    steps:
-      - task: TerraformInstaller@0
-        displayName: "Install Terraform latest"
+    displayName: Init
+    jobs:
+      - job: Init_start
+        steps:
+          - task: TerraformInstaller@0
+            displayName: "Install Terraform latest"
 
-      - task: TerraformTaskV2@2
-        displayName: "Terraform : azurerm - init"
-        inputs:
-          backendServiceArm: "packer-service-connection"
-          backendAzureRmResourceGroupName: ${{variables.devops_rg}}
-          backendAzureRmStorageAccountName: ${{variables.devops_storage}}
-          backendAzureRmContainerName: ${{variables.devops_storage_container}}
-          backendAzureRmKey: ${{variables.tfstate}}
+          - task: TerraformTaskV2@2
+            displayName: "Terraform : azurerm - init"
+            inputs:
+              backendServiceArm: "packer-service-connection"
+              backendAzureRmResourceGroupName: ${{variables.devops_rg}}
+              backendAzureRmStorageAccountName: ${{variables.devops_storage}}
+              backendAzureRmContainerName: ${{variables.devops_storage_container}}
+              backendAzureRmKey: ${{variables.tfstate}}
 
   - stage: Validate
-    steps:
-      - task: TerraformTaskV2@2
-        displayName: "Terraform : azurerm - validate"
-        inputs:
-          command: validate
+    jobs:
+      - job: Validate_job
+        steps:
+          - task: TerraformTaskV2@2
+            displayName: "Terraform : azurerm - validate"
+            inputs:
+              command: validate
 
   - stage: Plan
-    steps:
-      - task: TerraformTaskV2@2
-        displayName: "Terraform : azurerm - plan"
-        inputs:
-          command: plan
-          environmentServiceNameAzureRM: "packer-service-connection"
-          backendServiceArm: "packer-service-connection"
+    jobs:
+      - job: Plan_job
+        steps:
+          - task: TerraformTaskV2@2
+            displayName: "Terraform : azurerm - plan"
+            inputs:
+              command: plan
+              environmentServiceNameAzureRM: "packer-service-connection"
+              backendServiceArm: "packer-service-connection"
 
   - stage: apply
-    steps:
-      - task: TerraformTaskV2@2
-        displayName: "Terraform : azurerm - apply"
-        inputs:
-          command: apply
-          commandOptions: "-auto-approve"
-          environmentServiceNameAzureRM: "packer-service-connection"
+    jobs:
+      - job: apply_job
+        steps:
+          - task: TerraformTaskV2@2
+            displayName: "Terraform : azurerm - apply"
+            inputs:
+              command: apply
+              commandOptions: "-auto-approve"
+              environmentServiceNameAzureRM: "packer-service-connection"
