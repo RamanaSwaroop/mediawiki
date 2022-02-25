@@ -27,6 +27,7 @@ stages:
 
   - stage: Validate
     dependsOn: Init
+    condition: succeeded('Init')
     jobs:
       - job: Validate_job
         steps:
@@ -37,6 +38,7 @@ stages:
 
   - stage: Plan
     dependsOn: Validate
+    condition: succeeded('Validate')
     jobs:
       - job: Plan_job
         steps:
@@ -49,6 +51,7 @@ stages:
 
   - stage: apply
     dependsOn: Plan
+    condition: succeeded('Plan')
     jobs:
       - job: apply_job
         steps:
