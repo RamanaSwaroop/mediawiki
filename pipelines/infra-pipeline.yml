@@ -26,6 +26,7 @@ stages:
               backendAzureRmKey: ${{variables.tfstatefile}}
 
   - stage: Validate
+    dependsOn: Init
     jobs:
       - job: Validate_job
         steps:
@@ -35,6 +36,7 @@ stages:
               command: validate
 
   - stage: Plan
+    dependsOn: Validate
     jobs:
       - job: Plan_job
         steps:
@@ -46,6 +48,7 @@ stages:
               backendServiceArm: "packer-service-connection"
 
   - stage: apply
+    dependsOn: Plan
     jobs:
       - job: apply_job
         steps:
