@@ -2,6 +2,11 @@
 
 data "azurerm_client_config" "current" {}
 
+data "azurerm_image" "this" {
+  name                = var.vm_image_id
+  resource_group_name = var.image_rg
+}
+
 # Create network interface
 resource "azurerm_network_interface" "nic" {
   name                = join("", [var.vm_name, "-nic"])
@@ -9,7 +14,7 @@ resource "azurerm_network_interface" "nic" {
   resource_group_name = azurerm_resource_group.rg.name
   ip_configuration {
     name                          = "ipconfig"
-    subnet_id                     = azurerm_subnet.subnet.id
+    subnet_id                     = azurerm_subnet.this[0].id
     private_ip_address_allocation = "dynamic"
   }
   depends_on = [
@@ -85,6 +90,10 @@ resource "azurerm_key_vault_secret" "db-secret" {
   ]
 }
 
+locals {
+  subnet = var.subnets
+}
+
 # Create VM
 resource "azurerm_linux_virtual_machine" "vm" {
   name                = var.vm_name
@@ -103,7 +112,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
     disk_size_gb         = 64
     storage_account_type = "Standard_LRS"
   }
-  source_image_id = var.vm_image_id
+  source_image_id = data.azurerm_image.this.id
   identity {
     type = "SystemAssigned"
   }

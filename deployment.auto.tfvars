@@ -1,11 +1,4 @@
 
-client_id = ""
-
-client_secret = ""
-
-tenant_id = ""
-
-subscription_id = ""
 
 resource_tags = {
   "Environment" = "test"
@@ -19,13 +12,60 @@ resource_group_name = "rg2"
 
 lb_name = "lb1"
 
-nsg_name = "nsg1"
+# nsg_name = "nsg1"
 
-subnet_address_prefix = ["10.10.0.0/24"]
+# subnet_address_prefix = ["10.10.0.0/24"]
 
-subnet_name = "vm-snet"
+# subnet_name = "vm-snet"
 
-vm_image_id = ""
+vnet_address_space = ["10.10.0.0/16"]
+
+vnet_name = "vnet1"
+
+subnets = {
+  "subnet1" = {
+    address_prefixes = ["10.10.0.0/24"]
+    name             = "vm-snet"
+  },
+  "subnet2" = {
+    address_prefixes = ["10.10.1.0/24"]
+    name             = "agw-snet"
+  },
+}
+
+nsg = {
+  nsg1 = {
+    name = "nsg1"
+    security_rules = [
+      {
+        name                       = "IBA-Internet-VNET-HTTP"
+        priority                   = 100
+        direction                  = "Inbound"
+        access                     = "Allow"
+        protocol                   = "Tcp"
+        source_port_range          = "*"
+        destination_port_range     = "80"
+        source_address_prefix      = "Internet"
+        destination_address_prefix = "VirtualNetwork"
+      },
+      {
+        name                       = "IBA-Internet-VNET-SSH"
+        priority                   = 110
+        direction                  = "Inbound"
+        access                     = "Allow"
+        protocol                   = "Tcp"
+        source_port_range          = "*"
+        destination_port_range     = "22"
+        source_address_prefix      = "Internet"
+        destination_address_prefix = "VirtualNetwork"
+      }
+    ]
+  }
+}
+
+vm_image_id = "image-mediawiki-v1.34-0.0.3"
+
+image_rg = "mediawiki-devops-rg"
 
 vm_name = "vm1"
 
@@ -33,8 +73,6 @@ vm_size = "Standard_B2ms"
 
 vm_username = "testadmin"
 
-vnet_address_space = ["10.10.0.0/16"]
-
-vnet_name = "vnet1"
+agw_name = "agw01"
 
 script_path = "install.sh"

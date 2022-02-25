@@ -1,12 +1,7 @@
 # Configure the Azure provider
 terraform {
 
-  backend "azurerm" {
-    resource_group_name  = "mediawiki-devops-rg"
-    storage_account_name = "mediawikidevopsst"
-    container_name       = "tfstate"
-    key                  = "test.tfstate"
-  }
+  backend "azurerm" {  }
 
   required_providers {
     azurerm = {
@@ -19,8 +14,6 @@ terraform {
 }
 
 provider "azurerm" {
-  tenant_id       = var.tenant_id
-  subscription_id = var.subscription_id
   features {}
 }
 
