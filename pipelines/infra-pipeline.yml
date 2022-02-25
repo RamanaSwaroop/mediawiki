@@ -23,7 +23,7 @@ stages:
               backendAzureRmResourceGroupName: ${{variables.devops_rg}}
               backendAzureRmStorageAccountName: ${{variables.devops_storage}}
               backendAzureRmContainerName: ${{variables.devops_storage_container}}
-              backendAzureRmKey: ${{variables.tfstate}}
+              backendAzureRmKey: ${{variables.tfstatefile}}
 
   - stage: Validate
     jobs:
