@@ -12,12 +12,6 @@ resource_group_name = "rg2"
 
 lb_name = "lb1"
 
-# nsg_name = "nsg1"
-
-# subnet_address_prefix = ["10.10.0.0/24"]
-
-# subnet_name = "vm-snet"
-
 vnet_address_space = ["10.10.0.0/16"]
 
 vnet_name = "vnet1"

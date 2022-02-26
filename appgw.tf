@@ -1,8 +1,3 @@
-//https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/application_gateway
-
-# add vm behind app gw
-# manually deploy app gw and test config
-# remove load balancer rule for 80 - still need load balancer for ssh?
 
 locals {
   gw_name                    = "gateway1"
