@@ -84,6 +84,9 @@ resource "azurerm_key_vault_secret" "secret" {
   depends_on = [
     azurerm_key_vault_access_policy.policy
   ]
+  lifecycle {
+    ignore_changes = [value]
+  }
 }
 
 resource "random_password" "this" {
@@ -99,6 +102,9 @@ resource "azurerm_key_vault_secret" "db-secret" {
   depends_on = [
     azurerm_key_vault_access_policy.policy
   ]
+  lifecycle {
+    ignore_changes = [value]
+  }
 }
 
 locals {
