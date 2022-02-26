@@ -65,7 +65,7 @@ resource "azurerm_public_ip" "pip" {
 resource "azurerm_public_ip" "agw-pip" {
   name                = "fe-agw-pip"
   location            = azurerm_resource_group.rg.location
-  sku                 = "Standard"
+  sku                 = "Basic"
   resource_group_name = data.azurerm_resource_group.rg.name
   allocation_method   = "Static"
 }
@@ -74,7 +74,7 @@ resource "azurerm_public_ip" "agw-pip" {
 resource "azurerm_lb" "lb" {
   name                = var.lb_name
   location            = azurerm_resource_group.rg.location
-  sku                 = "Standard"
+  sku                 = "Basic"
   resource_group_name = data.azurerm_resource_group.rg.name
   frontend_ip_configuration {
     name                 = "fe-ipconfig"
