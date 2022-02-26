@@ -21,3 +21,7 @@ variable "script_path" {
 variable "image_rg" {
   type = string
 }
+
+variable "vm_subnet" {
+  type = string
+}

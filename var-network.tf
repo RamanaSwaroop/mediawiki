@@ -7,7 +7,7 @@ variable "vnet_address_space" {
 }
 
 variable "subnets" {
-  type = map(object({
+  type = list(object({
     name             = string
     address_prefixes = list(string)
   }))
@@ -15,8 +15,8 @@ variable "subnets" {
 }
 
 variable "nsg" {
-  type = map(object({
-    name       = string
+  type = list(object({
+    name = string
     security_rules = list(object({
       name                       = string
       protocol                   = string

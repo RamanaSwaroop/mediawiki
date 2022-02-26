@@ -7,6 +7,12 @@ data "azurerm_image" "this" {
   resource_group_name = var.image_rg
 }
 
+data "azurerm_subnet" "this" {
+  name                 = var.vm_subnet
+  virtual_network_name = var.vnet_name
+  resource_group_name  = var.resource_group_name
+}
+
 # Create network interface
 resource "azurerm_network_interface" "nic" {
   name                = join("", [var.vm_name, "-nic"])
@@ -15,6 +21,7 @@ resource "azurerm_network_interface" "nic" {
   ip_configuration {
     name                          = "ipconfig"
     private_ip_address_allocation = "dynamic"
+    subnet_id                     = data.azurerm_subnet.this.id
   }
   depends_on = [
     azurerm_lb.lb

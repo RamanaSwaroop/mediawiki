@@ -12,6 +12,11 @@ locals {
   listener_name     = "listener01"
 }
 
+data "azurerm_subnet" "agw" {
+  name                 = var.agw_subnet
+  virtual_network_name = var.vnet_name
+  resource_group_name  = var.resource_group_name
+}
 
 resource "azurerm_application_gateway" "this" {
   name                = var.agw_name
@@ -24,7 +29,7 @@ resource "azurerm_application_gateway" "this" {
   }
   gateway_ip_configuration {
     name      = local.gw_name
-    subnet_id = azurerm_subnet.this[1].id
+    subnet_id = data.azurerm_subnet.agw.id
   }
   frontend_port {
     name = local.fe_port_name

@@ -63,6 +63,8 @@ nsg = {
   }
 }
 
+vm_subnet = "vm-snet"
+
 vm_image_id = "image-mediawiki-v1.34-0.0.3"
 
 image_rg = "mediawiki-devops-rg"
@@ -74,5 +76,7 @@ vm_size = "Standard_B2ms"
 vm_username = "testadmin"
 
 agw_name = "agw01"
+
+agw_subnet = "agw-snet"
 
 script_path = "install.sh"
