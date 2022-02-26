@@ -11,6 +11,11 @@ data "azurerm_subnet" "this" {
   name                 = var.vm_subnet
   virtual_network_name = var.vnet_name
   resource_group_name  = var.resource_group_name
+  depends_on = [
+    azurerm_subnet.this,
+    azurerm_virutal_network.vnet,
+    azurerm_resource_group.rg
+  ]
 }
 
 # Create network interface

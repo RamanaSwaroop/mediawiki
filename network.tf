@@ -16,17 +16,17 @@ resource "azurerm_virtual_network" "vnet" {
 
 # Create subnet
 resource "azurerm_subnet" "this" {
-  for_each             = var.subnets
-  name                 = each.value["name"]
+  count                = length(var.subnets)
+  name                 = var.subnets[count.index]["name"]
   resource_group_name  = data.azurerm_resource_group.rg.name
-  address_prefixes     = each.value["address_prefixes"]
+  address_prefixes     = var.subnets[count.index]["address_prefixes"]
   virtual_network_name = azurerm_virtual_network.vnet.name
 }
 
 # Create NSG
 resource "azurerm_network_security_group" "this" {
-  for_each            = var.nsg
-  name                = each.value["name"]
+  count               = length(var.nsg)
+  name                = var.nsg[count.index]["name"]
   location            = data.azurerm_resource_group.rg.location
   resource_group_name = data.azurerm_resource_group.rg.name
   dynamic "security_rule" {

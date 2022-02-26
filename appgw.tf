@@ -16,6 +16,11 @@ data "azurerm_subnet" "agw" {
   name                 = var.agw_subnet
   virtual_network_name = var.vnet_name
   resource_group_name  = var.resource_group_name
+  depends_on = [
+    azurerm_subnet.this,
+    azurerm_resource_group.rg,
+    azurerm_virtual_network.vnet
+  ]
 }
 
 resource "azurerm_application_gateway" "this" {
