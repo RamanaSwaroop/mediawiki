@@ -74,6 +74,28 @@ nsg = [
         destination_port_range     = "80"
         source_address_prefix      = "Internet"
         destination_address_prefix = "VirtualNetwork"
+      },
+      {
+        name                       = "IBA-AzureLoadBalancer-Any-Any"
+        priority                   = 110
+        direction                  = "Inbound"
+        access                     = "Allow"
+        protocol                   = "Tcp"
+        source_port_range          = "*"
+        destination_port_range     = "*"
+        source_address_prefix      = "AzureLoadBalancer"
+        destination_address_prefix = "*"
+      },
+      {
+        name                       = "IBA-GatewayManager-Any-Any"
+        priority                   = 120
+        direction                  = "Inbound"
+        access                     = "Allow"
+        protocol                   = "Tcp"
+        source_port_range          = "*"
+        destination_port_range     = "65200-65535"
+        source_address_prefix      = "*"
+        destination_address_prefix = "GatewayManager"
       }
     ]
   }

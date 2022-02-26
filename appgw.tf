@@ -12,6 +12,7 @@ locals {
   listener_name              = "listener01"
   backend_http_settings_name = "be-http-setting"
   backend_address_pool_name  = "be-pool"
+  probe_name                 = "probe1"
 }
 
 data "azurerm_subnet" "agw" {
@@ -56,6 +57,7 @@ resource "azurerm_application_gateway" "this" {
     port                  = 80
     protocol              = local.protocol
     request_timeout       = 30
+    probe_name            = local.probe_name
   }
   http_listener {
     name                           = local.listener_name
@@ -69,5 +71,14 @@ resource "azurerm_application_gateway" "this" {
     http_listener_name         = local.listener_name
     backend_http_settings_name = local.backend_http_settings_name
     backend_address_pool_name  = local.backend_address_pool_name
+  }
+  probe {
+    name                = local.probe_name
+    interval            = 30
+    protocol            = "Http"
+    path                = "/mediawiki/"
+    timeout             = 30
+    unhealthy_threshold = 3
+    host                = "127.0.0.1"
   }
 }
