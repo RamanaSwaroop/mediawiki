@@ -30,20 +30,9 @@ stages:
             inputs:
               command: validate
 
-  # - stage: Validate
-  #   dependsOn: Init
-  #   condition: succeeded('Init')
-  #   jobs:
-  #     - job: Validate_job
-  #       steps:
-  #         - task: TerraformTaskV2@2
-  #           displayName: "Terraform : azurerm - validate"
-  #           inputs:
-  #             command: validate
-
   - stage: Plan
-    dependsOn: Validate
-    condition: succeeded('Validate')
+    dependsOn: Init
+    condition: succeeded('Init')
     jobs:
       - job: Plan_job
         steps:
@@ -83,7 +72,7 @@ stages:
               backendAzureRmStorageAccountName: ${{variables.devops_storage}}
               backendAzureRmContainerName: ${{variables.devops_storage_container}}
               backendAzureRmKey: ${{variables.tfstatefile}}
-              
+
           - task: TerraformTaskV2@2
             displayName: "Terraform : azurerm - apply"
             inputs:
