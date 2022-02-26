@@ -35,7 +35,7 @@ subnets = [
 
 nsg = [
   {
-    name = "nsg1"
+    name = "nsg-vmsnet"
     security_rules = [
       {
         name                       = "IBA-Internet-VNET-HTTP"
@@ -62,7 +62,7 @@ nsg = [
     ]
   },
   {
-    name = "nsg2"
+    name = "nsg-appgwsnet"
     security_rules = [
       {
         name                       = "IBA-Internet-VNET-HTTP"
