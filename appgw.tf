@@ -11,6 +11,7 @@ locals {
   protocol                   = "Http"
   listener_name              = "listener01"
   backend_http_settings_name = "be-http-setting"
+  backend_address_pool_name  = "be-pool"
 }
 
 data "azurerm_subnet" "agw" {
@@ -46,7 +47,7 @@ resource "azurerm_application_gateway" "this" {
     public_ip_address_id = azurerm_public_ip.agw-pip.id
   }
   backend_address_pool {
-    name         = "be-pool"
+    name         = local.backend_address_pool_name
     ip_addresses = azurerm_linux_virtual_machine.vm.private_ip_addresses
   }
   backend_http_settings {
@@ -67,5 +68,6 @@ resource "azurerm_application_gateway" "this" {
     rule_type                  = "Basic"
     http_listener_name         = local.listener_name
     backend_http_settings_name = local.backend_http_settings_name
+    backend_address_pool_name  = local.backend_address_pool_name
   }
 }
