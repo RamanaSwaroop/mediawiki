@@ -29,21 +29,21 @@ resource "azurerm_network_security_group" "this" {
   name                = var.nsg[count.index]["name"]
   location            = data.azurerm_resource_group.rg.location
   resource_group_name = data.azurerm_resource_group.rg.name
-  dynamic "security_rule" {
-    for_each = lookup(each.value, "security_rules", [])
-    content {
-      name                       = security_rule.value["name"]
-      description                = lookup(security_rule.value, "description", null)
-      protocol                   = coalesce(security_rule.value["protocol"], "Tcp")
-      direction                  = security_rule.value["direction"]
-      access                     = coalesce(security_rule.value["access"], "Allow")
-      priority                   = security_rule.value["priority"]
-      source_address_prefix      = lookup(security_rule.value, "source_address_prefix", null)
-      destination_address_prefix = lookup(security_rule.value, "destination_address_prefix", null)
-      source_port_range          = lookup(security_rule.value, "source_port_range", null)
-      destination_port_range     = lookup(security_rule.value, "destination_port_range", null)
-    }
-  }
+  security_rule       = var.nsg[count.index]["security_rules"]
+  #dynamic "security_rule" {
+  #  for_each = lookup(each.value, "security_rules", [])
+  #  content {
+  #    name                       = security_rule.value["name"]
+  #    protocol                   = coalesce(security_rule.value["protocol"], "Tcp")
+  #    direction                  = security_rule.value["direction"]
+  #    access                     = coalesce(security_rule.value["access"], "Allow")
+  #    priority                   = security_rule.value["priority"]
+  #    source_address_prefix      = lookup(security_rule.value, "source_address_prefix", null)
+  #    destination_address_prefix = lookup(security_rule.value, "destination_address_prefix", null)
+  #    source_port_range          = lookup(security_rule.value, "source_port_range", null)
+  #    destination_port_range     = lookup(security_rule.value, "destination_port_range", null)
+  #  }
+  #}
 }
 
 # Assume each subnet as unique nsg

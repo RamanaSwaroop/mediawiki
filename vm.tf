@@ -13,7 +13,7 @@ data "azurerm_subnet" "this" {
   resource_group_name  = var.resource_group_name
   depends_on = [
     azurerm_subnet.this,
-    azurerm_virutal_network.vnet,
+    azurerm_virtual_network.vnet,
     azurerm_resource_group.rg
   ]
 }
