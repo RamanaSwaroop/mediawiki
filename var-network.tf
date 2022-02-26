@@ -17,7 +17,6 @@ variable "subnets" {
 variable "nsg" {
   type = map(object({
     name       = string
-    subnet_ids = list(string)
     security_rules = list(object({
       name                       = string
       protocol                   = string
