@@ -17,7 +17,7 @@ az storage container create --name $container --account-name $stname --account-k
 rand=$RANDOM
 name=devopskv$rand
 echo $name 
-az keyvault create -n $name -g $devopsrg -l $location --enable-for-template-deployment $true 
+az keyvault create -n $name -g $devopsrg -l $location
 
 # az sig create -g mediawiki-image-rg --gallery-name mediawikisig
 
