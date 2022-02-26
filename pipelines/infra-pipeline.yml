@@ -25,16 +25,21 @@ stages:
               backendAzureRmContainerName: ${{variables.devops_storage_container}}
               backendAzureRmKey: ${{variables.tfstatefile}}
 
-  - stage: Validate
-    dependsOn: Init
-    condition: succeeded('Init')
-    jobs:
-      - job: Validate_job
-        steps:
           - task: TerraformTaskV2@2
             displayName: "Terraform : azurerm - validate"
             inputs:
               command: validate
+
+  # - stage: Validate
+  #   dependsOn: Init
+  #   condition: succeeded('Init')
+  #   jobs:
+  #     - job: Validate_job
+  #       steps:
+  #         - task: TerraformTaskV2@2
+  #           displayName: "Terraform : azurerm - validate"
+  #           inputs:
+  #             command: validate
 
   - stage: Plan
     dependsOn: Validate
@@ -42,6 +47,18 @@ stages:
     jobs:
       - job: Plan_job
         steps:
+          - task: TerraformInstaller@0
+            displayName: "Install Terraform latest"
+
+          - task: TerraformTaskV2@2
+            displayName: "Terraform : azurerm - init"
+            inputs:
+              backendServiceArm: "packer-service-connection"
+              backendAzureRmResourceGroupName: ${{variables.devops_rg}}
+              backendAzureRmStorageAccountName: ${{variables.devops_storage}}
+              backendAzureRmContainerName: ${{variables.devops_storage_container}}
+              backendAzureRmKey: ${{variables.tfstatefile}}
+
           - task: TerraformTaskV2@2
             displayName: "Terraform : azurerm - plan"
             inputs:
@@ -55,6 +72,18 @@ stages:
     jobs:
       - job: apply_job
         steps:
+          - task: TerraformInstaller@0
+            displayName: "Install Terraform latest"
+
+          - task: TerraformTaskV2@2
+            displayName: "Terraform : azurerm - init"
+            inputs:
+              backendServiceArm: "packer-service-connection"
+              backendAzureRmResourceGroupName: ${{variables.devops_rg}}
+              backendAzureRmStorageAccountName: ${{variables.devops_storage}}
+              backendAzureRmContainerName: ${{variables.devops_storage_container}}
+              backendAzureRmKey: ${{variables.tfstatefile}}
+              
           - task: TerraformTaskV2@2
             displayName: "Terraform : azurerm - apply"
             inputs:
