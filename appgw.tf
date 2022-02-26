@@ -5,11 +5,12 @@
 # remove load balancer rule for 80 - still need load balancer for ssh?
 
 locals {
-  gw_name           = "gateway1"
-  fe_port_name      = "fe-port"
-  fe_ip_config_name = "fe-ipconfig"
-  protocol          = "Http"
-  listener_name     = "listener01"
+  gw_name                    = "gateway1"
+  fe_port_name               = "fe-port"
+  fe_ip_config_name          = "fe-ipconfig"
+  protocol                   = "Http"
+  listener_name              = "listener01"
+  backend_http_settings_name = "be-http-setting"
 }
 
 data "azurerm_subnet" "agw" {
@@ -49,7 +50,7 @@ resource "azurerm_application_gateway" "this" {
   }
   backend_http_settings {
     cookie_based_affinity = "Enabled"
-    name                  = "be-http-setting"
+    name                  = local.backend_http_settings_name
     port                  = 80
     protocol              = local.protocol
     request_timeout       = 30
@@ -61,8 +62,9 @@ resource "azurerm_application_gateway" "this" {
     protocol                       = local.protocol
   }
   request_routing_rule {
-    name               = "rule1"
-    rule_type          = "Basic"
-    http_listener_name = local.listener_name
+    name                       = "rule1"
+    rule_type                  = "Basic"
+    http_listener_name         = local.listener_name
+    backend_http_settings_name = local.backend_http_settings_name
   }
 }
