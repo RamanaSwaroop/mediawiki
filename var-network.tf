@@ -11,7 +11,6 @@ variable "subnets" {
     name             = string
     address_prefixes = list(string)
   }))
-  default = [{}]
 }
 
 variable "nsg" {
@@ -29,7 +28,6 @@ variable "nsg" {
       destination_address_prefix = string
     }))
   }))
-  default = [{}]
 }
 
 
