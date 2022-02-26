@@ -29,7 +29,7 @@ resource "azurerm_application_gateway" "this" {
   location            = azurerm_resource_group.rg.location
   sku {
     name     = "Standard_Small"
-    tier     = "Standard_v2"
+    tier     = "Standard_v1"
     capacity = 1
   }
   gateway_ip_configuration {
