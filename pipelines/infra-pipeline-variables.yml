@@ -1,0 +1,12 @@
+variables:
+  - name: devops_rg
+    value: mediawiki-devops-rg
+
+  - name: devops_storage
+    value: mediawikidevopsst
+
+  - name: devops_storage_container
+    value: tfstate
+
+  - name: tfstatefile
+    value: wiki.tfstate

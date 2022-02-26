@@ -2,6 +2,22 @@
 
 data "azurerm_client_config" "current" {}
 
+data "azurerm_image" "this" {
+  name                = var.vm_image_id
+  resource_group_name = var.image_rg
+}
+
+data "azurerm_subnet" "this" {
+  name                 = var.vm_subnet
+  virtual_network_name = var.vnet_name
+  resource_group_name  = var.resource_group_name
+  depends_on = [
+    azurerm_subnet.this,
+    azurerm_virtual_network.vnet,
+    azurerm_resource_group.rg
+  ]
+}
+
 # Create network interface
 resource "azurerm_network_interface" "nic" {
   name                = join("", [var.vm_name, "-nic"])
@@ -9,8 +25,8 @@ resource "azurerm_network_interface" "nic" {
   resource_group_name = azurerm_resource_group.rg.name
   ip_configuration {
     name                          = "ipconfig"
-    subnet_id                     = azurerm_subnet.subnet.id
     private_ip_address_allocation = "dynamic"
+    subnet_id                     = data.azurerm_subnet.this.id
   }
   depends_on = [
     azurerm_lb.lb
@@ -68,6 +84,9 @@ resource "azurerm_key_vault_secret" "secret" {
   depends_on = [
     azurerm_key_vault_access_policy.policy
   ]
+  lifecycle {
+    ignore_changes = [value]
+  }
 }
 
 resource "random_password" "this" {
@@ -83,6 +102,13 @@ resource "azurerm_key_vault_secret" "db-secret" {
   depends_on = [
     azurerm_key_vault_access_policy.policy
   ]
+  lifecycle {
+    ignore_changes = [value]
+  }
+}
+
+locals {
+  subnet = var.subnets
 }
 
 # Create VM
@@ -103,7 +129,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
     disk_size_gb         = 64
     storage_account_type = "Standard_LRS"
   }
-  source_image_id = var.vm_image_id
+  source_image_id = data.azurerm_image.this.id
   identity {
     type = "SystemAssigned"
   }

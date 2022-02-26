@@ -17,3 +17,11 @@ variable "vm_username" {
 variable "script_path" {
   type = string
 }
+
+variable "image_rg" {
+  type = string
+}
+
+variable "vm_subnet" {
+  type = string
+}

@@ -1,7 +1,4 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+
 
 trigger:
   branches:
@@ -30,8 +27,8 @@ steps:
       templatePath: "$(System.DefaultWorkingDirectory)/packer-code/mediawiki.pkr.hcl"
       command: validate
       variables: |
-        image_name=${image_name}
-        image_rg=${image_rg}
+        image_name=${{variables.image_name}}
+        image_rg=${{variables.image_rg}}
 
   - task: Packer@1
     displayName: "Packer build"
@@ -41,5 +38,5 @@ steps:
       command: build
       force: true
       variables: |
-        image_name=${image_name}
-        image_rg=${image_rg}
+        image_name=${{variables.image_name}}
+        image_rg=${{variables.image_rg}}

@@ -15,68 +15,66 @@ resource "azurerm_virtual_network" "vnet" {
 }
 
 # Create subnet
-resource "azurerm_subnet" "subnet" {
-  name                 = var.subnet_name
+resource "azurerm_subnet" "this" {
+  count                = length(var.subnets)
+  name                 = var.subnets[count.index]["name"]
   resource_group_name  = data.azurerm_resource_group.rg.name
-  address_prefixes     = var.subnet_address_prefix
+  address_prefixes     = var.subnets[count.index]["address_prefixes"]
   virtual_network_name = azurerm_virtual_network.vnet.name
 }
 
 # Create NSG
-resource "azurerm_network_security_group" "nsg" {
-  name                = var.nsg_name
+resource "azurerm_network_security_group" "this" {
+  count               = length(var.nsg)
+  name                = var.nsg[count.index]["name"]
   location            = data.azurerm_resource_group.rg.location
   resource_group_name = data.azurerm_resource_group.rg.name
+  #security_rule       = var.nsg[count.index]["security_rules"]
+  dynamic "security_rule" {
+    for_each = var.nsg[count.index]["security_rules"]
+    content {
+      name                       = security_rule.value["name"]
+      protocol                   = coalesce(security_rule.value["protocol"], "Tcp")
+      direction                  = security_rule.value["direction"]
+      access                     = coalesce(security_rule.value["access"], "Allow")
+      priority                   = security_rule.value["priority"]
+      source_address_prefix      = lookup(security_rule.value, "source_address_prefix", null)
+      destination_address_prefix = lookup(security_rule.value, "destination_address_prefix", null)
+      source_port_range          = lookup(security_rule.value, "source_port_range", null)
+      destination_port_range     = lookup(security_rule.value, "destination_port_range", null)
+    }
+  }
 }
 
-# Create NSG rule
-resource "azurerm_network_security_rule" "rule1" {
-  name                        = "IBA-Internet-VNET-HTTP"
-  priority                    = 100
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "Tcp"
-  source_port_range           = "*"
-  destination_port_range      = "80"
-  source_address_prefix       = "Internet"
-  destination_address_prefix  = "VirtualNetwork"
-  resource_group_name         = data.azurerm_resource_group.rg.name
-  network_security_group_name = azurerm_network_security_group.nsg.name
-}
-
-resource "azurerm_network_security_rule" "rule2" {
-  name                        = "IBA-Internet-VNET-SSH"
-  priority                    = 110
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "Tcp"
-  source_port_range           = "*"
-  destination_port_range      = "22"
-  source_address_prefix       = "Internet"
-  destination_address_prefix  = "VirtualNetwork"
-  resource_group_name         = data.azurerm_resource_group.rg.name
-  network_security_group_name = azurerm_network_security_group.nsg.name
-}
-
+# Assume each subnet as unique nsg
 resource "azurerm_subnet_network_security_group_association" "this" {
-  subnet_id                 = azurerm_subnet.subnet.id
-  network_security_group_id = azurerm_network_security_group.nsg.id
+  count                     = length(var.subnets)
+  subnet_id                 = azurerm_subnet.this[count.index].id
+  network_security_group_id = azurerm_network_security_group.this[count.index].id
 }
 
 # Create Public IP
 resource "azurerm_public_ip" "pip" {
   name                = "fe-pip"
   location            = azurerm_resource_group.rg.location
-  sku                 = "Standard"
+  sku                 = "Basic"
   resource_group_name = data.azurerm_resource_group.rg.name
-  allocation_method   = "Static"
+  allocation_method   = "Dynamic"
+}
+
+resource "azurerm_public_ip" "agw-pip" {
+  name                = "fe-agw-pip"
+  location            = azurerm_resource_group.rg.location
+  sku                 = "Basic"
+  resource_group_name = data.azurerm_resource_group.rg.name
+  allocation_method   = "Dynamic"
 }
 
 # Create Public Load Balancer
 resource "azurerm_lb" "lb" {
   name                = var.lb_name
   location            = azurerm_resource_group.rg.location
-  sku                 = "Standard"
+  sku                 = "Basic"
   resource_group_name = data.azurerm_resource_group.rg.name
   frontend_ip_configuration {
     name                 = "fe-ipconfig"
