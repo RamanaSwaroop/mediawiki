@@ -27,8 +27,8 @@ steps:
       templatePath: "$(System.DefaultWorkingDirectory)/packer-code/mediawiki.pkr.hcl"
       command: validate
       variables: |
-        image_name=${variables.image_name}
-        image_rg=${variables.image_rg}
+        image_name=${{variables.image_name}}
+        image_rg=${{variables.image_rg}}
 
   - task: Packer@1
     displayName: "Packer build"
@@ -38,5 +38,5 @@ steps:
       command: build
       force: true
       variables: |
-        image_name=${variables.image_name}
-        image_rg=${variables.image_rg}
+        image_name=${{variables.image_name}}
+        image_rg=${{variables.image_rg}}
