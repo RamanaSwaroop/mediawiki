@@ -59,6 +59,14 @@ resource "azurerm_public_ip" "pip" {
   location            = azurerm_resource_group.rg.location
   sku                 = "Standard"
   resource_group_name = data.azurerm_resource_group.rg.name
+  allocation_method   = "Dynamic"
+}
+
+resource "azurerm_public_ip" "agw-pip" {
+  name                = "fe-agw-pip"
+  location            = azurerm_resource_group.rg.location
+  sku                 = "Standard"
+  resource_group_name = data.azurerm_resource_group.rg.name
   allocation_method   = "Static"
 }
 

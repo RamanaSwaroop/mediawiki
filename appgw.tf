@@ -42,7 +42,8 @@ resource "azurerm_application_gateway" "this" {
     port = 80
   }
   frontend_ip_configuration {
-    name = local.fe_ip_config_name
+    name                 = local.fe_ip_config_name
+    public_ip_address_id = azurerm_public_ip.agw-pip.id
   }
   backend_address_pool {
     name         = "be-pool"
