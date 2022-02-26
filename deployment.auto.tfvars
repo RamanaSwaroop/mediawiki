@@ -22,19 +22,19 @@ vnet_address_space = ["10.10.0.0/16"]
 
 vnet_name = "vnet1"
 
-subnets = {
-  "subnet1" = {
+subnets = [
+  {
     address_prefixes = ["10.10.0.0/24"]
     name             = "vm-snet"
   },
-  "subnet2" = {
+  {
     address_prefixes = ["10.10.1.0/24"]
     name             = "agw-snet"
   },
-}
+]
 
-nsg = {
-  nsg1 = {
+nsg = [
+  {
     name = "nsg1"
     security_rules = [
       {
@@ -60,8 +60,24 @@ nsg = {
         destination_address_prefix = "VirtualNetwork"
       }
     ]
+  },
+  {
+    name = "nsg2"
+    security_rules = [
+      {
+        name                       = "IBA-Internet-VNET-HTTP"
+        priority                   = 100
+        direction                  = "Inbound"
+        access                     = "Allow"
+        protocol                   = "Tcp"
+        source_port_range          = "*"
+        destination_port_range     = "80"
+        source_address_prefix      = "Internet"
+        destination_address_prefix = "VirtualNetwork"
+      }
+    ]
   }
-}
+]
 
 vm_subnet = "vm-snet"
 
