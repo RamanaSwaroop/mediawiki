@@ -17,3 +17,7 @@ variable "vnet_name" {
 variable "vm_name" {
   type = string
 }
+
+variable "agw_pip" {
+  type = string
+}

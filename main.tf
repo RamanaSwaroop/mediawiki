@@ -51,4 +51,5 @@ module "app-gw" {
   resource_group_name = var.resource_group_name
   vnet_name           = var.vnet_name
   vm_name             = var.vm_name
+  agw_pip             = var.agw_pip
 }
