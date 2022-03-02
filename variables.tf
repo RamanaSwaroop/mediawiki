@@ -81,3 +81,11 @@ variable "agw_name" {
 variable "agw_subnet" {
   type = string
 }
+
+variable "vm_pip" {
+  type = string
+}
+
+variable "agw-pip"{
+  type = string
+}
