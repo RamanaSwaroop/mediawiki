@@ -34,6 +34,7 @@ module "vm" {
   vm_username         = var.vm_username
   script_path         = var.script_path
   image_rg            = var.image_rg
+  vnet_name           = var.vnet_name
   vm_subnet           = var.vm_subnet
   lb_name             = var.lb_name
 }
