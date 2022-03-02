@@ -17,7 +17,7 @@ module "network" {
   nsg                 = var.nsg
   lb_name             = var.lb_name
   vm_pip              = var.vm_pip
-  agw-pip             = var.agw-pip
+  agw-pip             = var.agw_pip
 }
 
 module "vm" {
