@@ -116,10 +116,6 @@ resource "azurerm_key_vault_secret" "db-secret" {
   }
 }
 
-locals {
-  subnet = var.subnets
-}
-
 # Create VM
 resource "azurerm_linux_virtual_machine" "vm" {
   name                = var.vm_name

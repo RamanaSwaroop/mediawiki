@@ -6,6 +6,10 @@ variable "resource_tags" {
   type = map(string)
 }
 
+variable "vnet_name" {
+  type = string
+}
+
 variable "vm_name" {
   type = string
 }
