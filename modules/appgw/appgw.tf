@@ -24,7 +24,7 @@ data "azurerm_virtual_machine" "this" {
   resource_group_name = var.resource_group_name 
 }
 
-data "azurerm_public" "this"{
+data "azurerm_public_ip" "this"{
   name = var.agw_pip
   resource_group_name = var.resource_group_name
 }
