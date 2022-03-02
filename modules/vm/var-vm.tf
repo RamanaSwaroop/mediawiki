@@ -1,3 +1,11 @@
+variable "resource_group_name" {
+  type = string
+}
+
+variable "resource_tags" {
+  type = map(string)
+}
+
 variable "vm_name" {
   type = string
 }
@@ -23,5 +31,9 @@ variable "image_rg" {
 }
 
 variable "vm_subnet" {
+  type = string
+}
+
+variable "lb_name" {
   type = string
 }

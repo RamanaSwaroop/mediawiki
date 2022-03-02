@@ -1,3 +1,7 @@
+variable "resource_group_name" {
+  type = string
+}
+
 variable "vnet_name" {
   type = string
 }
@@ -31,5 +35,13 @@ variable "nsg" {
 }
 
 variable "lb_name" {
+  type = string
+}
+
+variable "vm_pip" {
+  type = string
+}
+
+variable "agw-pip"{
   type = string
 }

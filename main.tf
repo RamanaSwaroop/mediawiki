@@ -10,11 +10,14 @@ module "network" {
   depends_on = [
     module.rg
   ]
-  vnet_name          = var.vnet_name
-  vnet_address_space = var.vnet_address_space
-  subnets            = var.subnets
-  nsg                = var.nsg
-  lb_name            = var.lb_name
+  resource_group_name = var.resource_group_name
+  vnet_name           = var.vnet_name
+  vnet_address_space  = var.vnet_address_space
+  subnets             = var.subnets
+  nsg                 = var.nsg
+  lb_name             = var.lb_name
+  vm_pip              = var.vm_pip
+  agw-pip             = var.agw-pip
 }
 
 module "vm" {
@@ -23,13 +26,16 @@ module "vm" {
     module.rg,
     module.network
   ]
-  vm_name     = var.vm_name
-  vm_size     = var.vm_size
-  vm_image_id = var.vm_image_id
-  vm_username = var.vm_username
-  script_path = var.script_path
-  image_rg    = var.image_rg
-  vm_subnet   = var.vm_subnet
+  resource_group_name = var.resource_group_name
+  resource_tags       = var.resource_tags
+  vm_name             = var.vm_name
+  vm_size             = var.vm_size
+  vm_image_id         = var.vm_image_id
+  vm_username         = var.vm_username
+  script_path         = var.script_path
+  image_rg            = var.image_rg
+  vm_subnet           = var.vm_subnet
+  lb_name             = var.lb_name
 }
 
 module "app-gw" {
@@ -39,6 +45,8 @@ module "app-gw" {
     module.network,
     module.vm
   ]
-  agw_name   = var.agw_name
-  agw_subnet = var.agw_subnet
+  agw_name            = var.agw_name
+  agw_subnet          = var.agw_subnet
+  resource_group_name = var.resource_group_name
+  vnet_name           = var.vnet_name
 }

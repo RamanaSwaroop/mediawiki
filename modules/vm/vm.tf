@@ -7,36 +7,45 @@ data "azurerm_image" "this" {
   resource_group_name = var.image_rg
 }
 
+data "azurerm_resource_group" "rg" {
+  name = var.resource_group_name
+}
+
 data "azurerm_subnet" "this" {
   name                 = var.vm_subnet
   virtual_network_name = var.vnet_name
   resource_group_name  = var.resource_group_name
-  depends_on = [
-    azurerm_subnet.this,
-    azurerm_virtual_network.vnet,
-    azurerm_resource_group.rg
-  ]
+}
+
+data "azurerm_lb" "this" {
+  name = var.lb_name
+  resource_group_name = var.resource_group_name
+}
+
+data "azurerm_lb_backend_address_pool" "lb-be-pool"{
+  name = "blue-be"
+  loadbalancer_id = data.azurerm_lb.this.id
 }
 
 # Create network interface
 resource "azurerm_network_interface" "nic" {
   name                = join("", [var.vm_name, "-nic"])
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
+  location            = data.azurerm_resource_group.rg.location
+  resource_group_name = data.azurerm_resource_group.rg.name
   ip_configuration {
     name                          = "ipconfig"
     private_ip_address_allocation = "dynamic"
     subnet_id                     = data.azurerm_subnet.this.id
   }
   depends_on = [
-    azurerm_lb.lb
+    data.azurerm_lb.this
   ]
 }
 
 resource "azurerm_network_interface_backend_address_pool_association" "nic-bepool" {
   network_interface_id    = azurerm_network_interface.nic.id
   ip_configuration_name   = azurerm_network_interface.nic.ip_configuration[0].name
-  backend_address_pool_id = azurerm_lb_backend_address_pool.lb-be-pool.id
+  backend_address_pool_id = data.azurerm_lb_backend_address_pool.lb-be-pool.id
   lifecycle {
     ignore_changes = [
       network_interface_id,
@@ -55,8 +64,8 @@ resource "random_id" "rid" {
 
 resource "azurerm_key_vault" "kv" {
   name                   = substr("wiki${random_id.rid.hex}kv", 0, 23)
-  location               = azurerm_resource_group.rg.location
-  resource_group_name    = azurerm_resource_group.rg.name
+  location               = data.azurerm_resource_group.rg.location
+  resource_group_name    = data.azurerm_resource_group.rg.name
   tenant_id              = data.azurerm_client_config.current.tenant_id
   enabled_for_deployment = true
   sku_name               = "standard"
@@ -72,7 +81,7 @@ resource "azurerm_key_vault_access_policy" "policy" {
   key_vault_id       = azurerm_key_vault.kv.id
   tenant_id          = data.azurerm_client_config.current.tenant_id
   object_id          = data.azurerm_client_config.current.object_id
-  secret_permissions = ["get", "set", "list", "delete", "recover"]
+  secret_permissions = ["get", "set", "list", "delete", "recover", "purge"]
 }
 
 
@@ -114,8 +123,8 @@ locals {
 # Create VM
 resource "azurerm_linux_virtual_machine" "vm" {
   name                = var.vm_name
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
+  location            = data.azurerm_resource_group.rg.location
+  resource_group_name = data.azurerm_resource_group.rg.name
   size                = var.vm_size
   admin_username      = var.vm_username
   admin_ssh_key {
