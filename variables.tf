@@ -86,6 +86,6 @@ variable "vm_pip" {
   type = string
 }
 
-variable "agw-pip" {
+variable "agw_pip" {
   type = string
 }
