@@ -50,4 +50,5 @@ module "app-gw" {
   agw_subnet          = var.agw_subnet
   resource_group_name = var.resource_group_name
   vnet_name           = var.vnet_name
+  vm_name             = var.vm_name
 }
