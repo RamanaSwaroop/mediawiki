@@ -4,3 +4,4 @@
 *.tfstate.*
 
 mediawiki.json
+run.sh
