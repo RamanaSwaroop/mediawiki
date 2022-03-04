@@ -4,7 +4,7 @@ data "azurerm_resource_group" "this"{
 }
 
 data "azurerm_key_vault" "this" {
-  name = var.kv_name
+  name                = var.kv_name
   resource_group_name = var.resource_group_name
 }
 
@@ -29,7 +29,7 @@ resource "azurerm_mariadb_server" "this" {
   resource_group_name = data.azurerm_resource_group.this.name
 
   administrator_login = "wikiadmin"
-  administrator_login_password = azurerm_key_vault_secret.this.value
+  administrator_login_password = random_password.this.result
 
   sku_name = "B_Gen5_2"
   storage_mb = 5120
