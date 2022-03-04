@@ -24,6 +24,9 @@ module "kv" {
   source              = "./modules/keyvault"
   resource_group_name = var.resource_group_name
   kv_name             = var.kv_name
+  depends_on = [
+    module.rg
+  ]
 }
 
 module "vm" {
