@@ -53,3 +53,14 @@ module "app-gw" {
   vm_name             = var.vm_name
   agw_pip             = var.agw_pip
 }
+
+module "mariadb" {
+  source = "./modules/mariadb"
+  depends_on = [
+    module.rg,
+    module.network
+  ]
+  resource_group_name = var.resource_group_name
+  mariadb_server_name = var.mariadb_server_name
+  mariadb_name        = var.mariadb_name
+}

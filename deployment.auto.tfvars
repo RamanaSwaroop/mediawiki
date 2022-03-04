@@ -116,3 +116,7 @@ agw_name = "agw01"
 agw_subnet = "agw-snet"
 
 script_path = "install.sh"
+
+mariadb_server_name = "mediawikiserver0403"
+
+mariadb_name = "wikidatabase"

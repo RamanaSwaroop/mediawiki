@@ -84,4 +84,10 @@ resource "azurerm_application_gateway" "this" {
     unhealthy_threshold = 3
     host                = "127.0.0.1"
   }
+  waf_configuration {
+    enabled = true
+    firewall_mode = "Detection"
+    rule_set_type = "OWASP"
+    rule_set_version = "3.2"
+  }
 }

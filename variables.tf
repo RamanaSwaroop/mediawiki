@@ -89,3 +89,11 @@ variable "vm_pip" {
 variable "agw_pip" {
   type = string
 }
+
+variable "mariadb_server_name" {
+  type = string
+}
+
+variable "mariadb_name" {
+  type = string
+}
