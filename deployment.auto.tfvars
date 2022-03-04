@@ -121,7 +121,7 @@ mariadb_server_name = "mediawikiserver0403"
 
 mariadb_name = "wikidatabase"
 
-kv_name = "wiki45ded292afkv"
+kv_name = "wiki45ded292afkv01"
 
 agw_sku = {
   name = "WAF_v2"

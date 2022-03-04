@@ -59,7 +59,7 @@ resource "azurerm_public_ip" "this" {
 }
 
 # Create Public Load Balancer
-resource "azurerm_lb" "lb" {
+resource "azurerm_lb" "this" {
   name                = var.lb_name
   location            = data.azurerm_resource_group.this.location
   sku                 = "Basic"
@@ -71,34 +71,28 @@ resource "azurerm_lb" "lb" {
 }
 
 # Create backend pool for load balancer
-resource "azurerm_lb_backend_address_pool" "lb-be-pool" {
+resource "azurerm_lb_backend_address_pool" "this" {
   name            = "blue-be"
-  loadbalancer_id = azurerm_lb.lb.id
+  loadbalancer_id = azurerm_lb.this.id
 }
 
-resource "azurerm_lb_backend_address_pool" "lb-be-pool-2" {
-  name            = "green-be"
-  loadbalancer_id = azurerm_lb.lb.id
-}
-
-
-resource "azurerm_lb_probe" "probe2" {
+resource "azurerm_lb_probe" "this" {
   name                = "sshp-probe"
   resource_group_name = data.azurerm_resource_group.this.name
-  loadbalancer_id     = azurerm_lb.lb.id
+  loadbalancer_id     = azurerm_lb.this.id
   port                = "22"
   protocol            = "Tcp"
 }
 
 
-resource "azurerm_lb_rule" "rule2" {
+resource "azurerm_lb_rule" "this" {
   name                           = "ssh-rule"
   resource_group_name            = data.azurerm_resource_group.this.name
-  loadbalancer_id                = azurerm_lb.lb.id
-  probe_id                       = azurerm_lb_probe.probe2.id
+  loadbalancer_id                = azurerm_lb.this.id
+  probe_id                       = azurerm_lb_probe.this.id
   frontend_ip_configuration_name = "fe-ipconfig"
   protocol                       = "Tcp"
   frontend_port                  = 22
   backend_port                   = 22
-  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.lb-be-pool.id]
+  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.this.id]
 }
