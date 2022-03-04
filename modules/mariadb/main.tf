@@ -17,7 +17,7 @@ resource "random_password" "this" {
 resource "azurerm_key_vault_secret" "this" {
   name         = "wiki"
   value        = random_password.this.result
-  key_vault_id = data.azurerm_key_vault.kv.id
+  key_vault_id = data.azurerm_key_vault.this.id
   lifecycle {
     ignore_changes = [value]
   }
