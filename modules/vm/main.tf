@@ -27,7 +27,7 @@ data "azurerm_lb_backend_address_pool" "lb-be-pool" {
   loadbalancer_id = data.azurerm_lb.this.id
 }
 
-data "azurerm_keyvault" "this" {
+data "azurerm_key_vault" "this" {
   name = var.kv_name
   resource_group_name = var.resource_group_name
 }

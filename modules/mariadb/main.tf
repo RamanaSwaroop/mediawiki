@@ -3,7 +3,7 @@ data "azurerm_resource_group" "this"{
     name = var.resource_group_name
 }
 
-data "azurerm_keyvault" "this" {
+data "azurerm_key_vault" "this" {
   name = var.kv_name
   resource_group_name = var.resource_group_name
 }
