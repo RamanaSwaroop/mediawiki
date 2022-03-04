@@ -124,6 +124,6 @@ mariadb_name = "wikidatabase"
 kv_name = "wiki45ded292afkv"
 
 agw_sku = {
-  name = "Standard_v2"
-  tier = "Standard_v2"
+  name = "WAF_v2"
+  tier = "WAF_v2"
 }

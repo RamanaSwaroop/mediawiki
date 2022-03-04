@@ -41,7 +41,3 @@ variable "lb_name" {
 variable "vm_pip" {
   type = string
 }
-
-variable "agw-pip"{
-  type = string
-}

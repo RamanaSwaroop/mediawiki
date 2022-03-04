@@ -24,9 +24,12 @@ data "azurerm_virtual_machine" "this" {
   resource_group_name = var.resource_group_name 
 }
 
-data "azurerm_public_ip" "this"{
-  name = var.agw_pip
-  resource_group_name = var.resource_group_name
+resource "azurerm_public_ip" "this" {
+  name                = var.agw_pip
+  location            = data.azurerm_resource_group.this.location
+  sku                 = "Standard"
+  resource_group_name = data.azurerm_resource_group.this.name
+  allocation_method   = "Static"
 }
 
 resource "azurerm_application_gateway" "this" {
@@ -48,7 +51,7 @@ resource "azurerm_application_gateway" "this" {
   }
   frontend_ip_configuration {
     name                 = local.fe_ip_config_name
-    public_ip_address_id = data.azurerm_public_ip.this.id
+    public_ip_address_id = azurerm_public_ip.this.id
   }
   backend_address_pool {
     name         = local.backend_address_pool_name

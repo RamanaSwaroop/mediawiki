@@ -1,31 +1,31 @@
-data "azurerm_resource_group" "rg" {
+data "azurerm_resource_group" "this" {
   name = var.resource_group_name
 }
 
 # Create a virtual network
-resource "azurerm_virtual_network" "vnet" {
+resource "azurerm_virtual_network" "this" {
   name                = var.vnet_name
   address_space       = var.vnet_address_space
-  location            = data.azurerm_resource_group.rg.location
-  resource_group_name = data.azurerm_resource_group.rg.name
-  tags                = data.azurerm_resource_group.rg.tags
+  location            = data.azurerm_resource_group.this.location
+  resource_group_name = data.azurerm_resource_group.this.name
+  tags                = data.azurerm_resource_group.this.tags
 }
 
 # Create subnet
 resource "azurerm_subnet" "this" {
   count                = length(var.subnets)
   name                 = var.subnets[count.index]["name"]
-  resource_group_name  = data.azurerm_resource_group.rg.name
+  resource_group_name  = data.azurerm_resource_group.this.name
   address_prefixes     = var.subnets[count.index]["address_prefixes"]
-  virtual_network_name = azurerm_virtual_network.vnet.name
+  virtual_network_name = azurerm_virtual_network.this.name
 }
 
 # Create NSG
 resource "azurerm_network_security_group" "this" {
   count               = length(var.nsg)
   name                = var.nsg[count.index]["name"]
-  location            = data.azurerm_resource_group.rg.location
-  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = data.azurerm_resource_group.this.location
+  resource_group_name = data.azurerm_resource_group.this.name
   dynamic "security_rule" {
     for_each = var.nsg[count.index]["security_rules"]
     content {
@@ -50,31 +50,23 @@ resource "azurerm_subnet_network_security_group_association" "this" {
 }
 
 # Create Public IP
-resource "azurerm_public_ip" "pip" {
+resource "azurerm_public_ip" "this" {
   name                = var.vm_pip
-  location            = data.azurerm_resource_group.rg.location
+  location            = data.azurerm_resource_group.this.location
   sku                 = "Basic"
-  resource_group_name = data.azurerm_resource_group.rg.name
-  allocation_method   = "Dynamic"
-}
-
-resource "azurerm_public_ip" "agw-pip" {
-  name                = var.agw-pip
-  location            = data.azurerm_resource_group.rg.location
-  sku                 = "Basic"
-  resource_group_name = data.azurerm_resource_group.rg.name
+  resource_group_name = data.azurerm_resource_group.this.name
   allocation_method   = "Dynamic"
 }
 
 # Create Public Load Balancer
 resource "azurerm_lb" "lb" {
   name                = var.lb_name
-  location            = data.azurerm_resource_group.rg.location
+  location            = data.azurerm_resource_group.this.location
   sku                 = "Basic"
-  resource_group_name = data.azurerm_resource_group.rg.name
+  resource_group_name = data.azurerm_resource_group.this.name
   frontend_ip_configuration {
     name                 = "fe-ipconfig"
-    public_ip_address_id = azurerm_public_ip.pip.id
+    public_ip_address_id = azurerm_public_ip.this.id
   }
 }
 
@@ -89,40 +81,19 @@ resource "azurerm_lb_backend_address_pool" "lb-be-pool-2" {
   loadbalancer_id = azurerm_lb.lb.id
 }
 
-# Create health probe
-# resource "azurerm_lb_probe" "probe1" {
-#   name                = "http-probe"
-#   resource_group_name = data.azurerm_resource_group.rg.name
-#   loadbalancer_id     = azurerm_lb.lb.id
-#   port                = "80"
-#   protocol            = "http"
-#   request_path        = "/mediawiki/"
-# }
 
 resource "azurerm_lb_probe" "probe2" {
   name                = "sshp-probe"
-  resource_group_name = data.azurerm_resource_group.rg.name
+  resource_group_name = data.azurerm_resource_group.this.name
   loadbalancer_id     = azurerm_lb.lb.id
   port                = "22"
   protocol            = "Tcp"
 }
 
-# Create inbound LB rule
-# resource "azurerm_lb_rule" "rule1" {
-#   name                           = "http-rule"
-#   resource_group_name            = data.azurerm_resource_group.rg.name
-#   loadbalancer_id                = azurerm_lb.lb.id
-#   probe_id                       = azurerm_lb_probe.probe1.id
-#   frontend_ip_configuration_name = "fe-ipconfig"
-#   protocol                       = "Tcp"
-#   frontend_port                  = 80
-#   backend_port                   = 80
-#   backend_address_pool_ids       = [azurerm_lb_backend_address_pool.lb-be-pool.id]
-# }
 
 resource "azurerm_lb_rule" "rule2" {
   name                           = "ssh-rule"
-  resource_group_name            = data.azurerm_resource_group.rg.name
+  resource_group_name            = data.azurerm_resource_group.this.name
   loadbalancer_id                = azurerm_lb.lb.id
   probe_id                       = azurerm_lb_probe.probe2.id
   frontend_ip_configuration_name = "fe-ipconfig"
@@ -131,5 +102,3 @@ resource "azurerm_lb_rule" "rule2" {
   backend_port                   = 22
   backend_address_pool_ids       = [azurerm_lb_backend_address_pool.lb-be-pool.id]
 }
-
-# Create outbound LB rule - probably not required.
