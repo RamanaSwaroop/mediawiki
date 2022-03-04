@@ -8,7 +8,7 @@ resource_tags = {
 
 resource_group_location = "eastus"
 
-resource_group_name = "rg2"
+resource_group_name = "rg3"
 
 lb_name = "lb1"
 
