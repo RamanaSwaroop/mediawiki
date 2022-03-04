@@ -15,6 +15,10 @@ resource "azurerm_key_vault" "this" {
   access_policy = [{
     tenant_id          = data.azurerm_client_config.current.tenant_id
     object_id          = data.azurerm_client_config.current.object_id
+    application_id     = data.azurerm_client_config.current.client_id
+    key_permissions    = []
+    certificate_permissions = []
+    storage_permissions = []
     secret_permissions = ["get", "set", "list", "delete", "recover", "purge"]
   }]
 }
