@@ -32,7 +32,7 @@ resource "azurerm_mariadb_server" "this" {
   administrator_login_password = random_password.this.result
 
   sku_name = "B_Gen5_2"
-  storage_mb = 5120
+  storage_mb = 51200
   version = 10.2
 
   auto_grow_enabled = true
