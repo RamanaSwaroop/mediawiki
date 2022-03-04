@@ -7,7 +7,7 @@ data "azurerm_image" "this" {
   resource_group_name = var.image_rg
 }
 
-data "azurerm_resource_group" "rg" {
+data "azurerm_resource_group" "this" {
   name = var.resource_group_name
 }
 
@@ -22,7 +22,7 @@ data "azurerm_lb" "this" {
   resource_group_name = var.resource_group_name
 }
 
-data "azurerm_lb_backend_address_pool" "lb-be-pool" {
+data "azurerm_lb_backend_address_pool" "this" {
   name            = "blue-be"
   loadbalancer_id = data.azurerm_lb.this.id
 }
@@ -33,10 +33,10 @@ data "azurerm_key_vault" "this" {
 }
 
 # Create network interface
-resource "azurerm_network_interface" "nic" {
+resource "azurerm_network_interface" "this" {
   name                = join("", [var.vm_name, "-nic"])
-  location            = data.azurerm_resource_group.rg.location
-  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = data.azurerm_resource_group.this.location
+  resource_group_name = data.azurerm_resource_group.this.name
   ip_configuration {
     name                          = "ipconfig"
     private_ip_address_allocation = "dynamic"
@@ -47,10 +47,10 @@ resource "azurerm_network_interface" "nic" {
   ]
 }
 
-resource "azurerm_network_interface_backend_address_pool_association" "nic-bepool" {
-  network_interface_id    = azurerm_network_interface.nic.id
-  ip_configuration_name   = azurerm_network_interface.nic.ip_configuration[0].name
-  backend_address_pool_id = data.azurerm_lb_backend_address_pool.lb-be-pool.id
+resource "azurerm_network_interface_backend_address_pool_association" "this" {
+  network_interface_id    = azurerm_network_interface.this.id
+  ip_configuration_name   = azurerm_network_interface.this.ip_configuration[0].name
+  backend_address_pool_id = data.azurerm_lb_backend_address_pool.this.id
   lifecycle {
     ignore_changes = [
       network_interface_id,
@@ -59,25 +59,16 @@ resource "azurerm_network_interface_backend_address_pool_association" "nic-bepoo
   }
 }
 
-# Create Key Vault
-resource "random_id" "rid" {
-  keepers = {
-    rg = var.resource_group_name
-  }
-  byte_length = 5
-}
-
 # Generate SSH Key
-resource "tls_private_key" "private-key" {
+resource "tls_private_key" "this" {
   algorithm = "RSA"
   rsa_bits  = 2048
 }
 
-
 # Store generated SSH key
-resource "azurerm_key_vault_secret" "secret" {
+resource "azurerm_key_vault_secret" "this" {
   name         = join("-", [var.vm_name, "key"])
-  value        = tls_private_key.private-key.private_key_pem
+  value        = tls_private_key.this.private_key_pem
   key_vault_id = data.azurerm_key_vault.this.id
   lifecycle {
     ignore_changes = [value]
@@ -85,17 +76,17 @@ resource "azurerm_key_vault_secret" "secret" {
 }
 
 # Create VM
-resource "azurerm_linux_virtual_machine" "vm" {
+resource "azurerm_linux_virtual_machine" "this" {
   name                = var.vm_name
-  location            = data.azurerm_resource_group.rg.location
-  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = data.azurerm_resource_group.this.location
+  resource_group_name = data.azurerm_resource_group.this.name
   size                = var.vm_size
   admin_username      = var.vm_username
   admin_ssh_key {
     username   = var.vm_username
-    public_key = tls_private_key.private-key.public_key_openssh
+    public_key = tls_private_key.this.public_key_openssh
   }
-  network_interface_ids = [azurerm_network_interface.nic.id]
+  network_interface_ids = [azurerm_network_interface.this.id]
   os_disk {
     name                 = join("", [var.vm_name, "-osdisk"])
     caching              = "ReadWrite"
@@ -119,13 +110,13 @@ resource "azurerm_linux_virtual_machine" "vm" {
 resource "azurerm_key_vault_access_policy" "vmpolicy" {
   key_vault_id       = data.azurerm_key_vault.this.id
   tenant_id          = data.azurerm_client_config.current.tenant_id
-  object_id          = azurerm_linux_virtual_machine.vm.identity[0].principal_id
+  object_id          = azurerm_linux_virtual_machine.this.identity[0].principal_id
   secret_permissions = ["get", "set", "list"]
 }
 
 resource "azurerm_virtual_machine_extension" "custom_script" {
   name                       = "ConfigureApp"
-  virtual_machine_id         = azurerm_linux_virtual_machine.vm.id
+  virtual_machine_id         = azurerm_linux_virtual_machine.this.id
   publisher                  = "Microsoft.Azure.Extensions"
   type                       = "CustomScript"
   type_handler_version       = "2.1"

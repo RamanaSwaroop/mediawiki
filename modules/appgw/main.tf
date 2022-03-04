@@ -9,11 +9,11 @@ locals {
   probe_name                 = "probe1"
 }
 
-data "azurerm_resource_group" "rg" {
+data "azurerm_resource_group" "this" {
   name = var.resource_group_name
 }
 
-data "azurerm_subnet" "agw" {
+data "azurerm_subnet" "this" {
   name                 = var.agw_subnet
   virtual_network_name = var.vnet_name
   resource_group_name  = var.resource_group_name
@@ -31,8 +31,8 @@ data "azurerm_public_ip" "this"{
 
 resource "azurerm_application_gateway" "this" {
   name                = var.agw_name
-  resource_group_name = data.azurerm_resource_group.rg.name
-  location            = data.azurerm_resource_group.rg.location
+  resource_group_name = data.azurerm_resource_group.this.name
+  location            = data.azurerm_resource_group.this.location
   sku {
     name     = var.agw_sku.name
     tier     = var.agw_sku.tier
@@ -40,7 +40,7 @@ resource "azurerm_application_gateway" "this" {
   }
   gateway_ip_configuration {
     name      = local.gw_name
-    subnet_id = data.azurerm_subnet.agw.id
+    subnet_id = data.azurerm_subnet.this.id
   }
   frontend_port {
     name = local.fe_port_name
