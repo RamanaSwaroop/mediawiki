@@ -18,13 +18,18 @@ data "azurerm_subnet" "this" {
 }
 
 data "azurerm_lb" "this" {
-  name = var.lb_name
+  name                = var.lb_name
   resource_group_name = var.resource_group_name
 }
 
-data "azurerm_lb_backend_address_pool" "lb-be-pool"{
-  name = "blue-be"
+data "azurerm_lb_backend_address_pool" "lb-be-pool" {
+  name            = "blue-be"
   loadbalancer_id = data.azurerm_lb.this.id
+}
+
+data "azurerm_keyvault" "this" {
+  name = var.kv_name
+  resource_group_name = var.resource_group_name
 }
 
 # Create network interface
@@ -62,26 +67,10 @@ resource "random_id" "rid" {
   byte_length = 5
 }
 
-resource "azurerm_key_vault" "kv" {
-  name                   = substr("wiki${random_id.rid.hex}kv", 0, 23)
-  location               = data.azurerm_resource_group.rg.location
-  resource_group_name    = data.azurerm_resource_group.rg.name
-  tenant_id              = data.azurerm_client_config.current.tenant_id
-  enabled_for_deployment = true
-  sku_name               = "standard"
-}
-
 # Generate SSH Key
 resource "tls_private_key" "private-key" {
   algorithm = "RSA"
   rsa_bits  = 2048
-}
-
-resource "azurerm_key_vault_access_policy" "policy" {
-  key_vault_id       = azurerm_key_vault.kv.id
-  tenant_id          = data.azurerm_client_config.current.tenant_id
-  object_id          = data.azurerm_client_config.current.object_id
-  secret_permissions = ["get", "set", "list", "delete", "recover", "purge"]
 }
 
 
@@ -89,28 +78,7 @@ resource "azurerm_key_vault_access_policy" "policy" {
 resource "azurerm_key_vault_secret" "secret" {
   name         = join("-", [var.vm_name, "key"])
   value        = tls_private_key.private-key.private_key_pem
-  key_vault_id = azurerm_key_vault.kv.id
-  depends_on = [
-    azurerm_key_vault_access_policy.policy
-  ]
-  lifecycle {
-    ignore_changes = [value]
-  }
-}
-
-resource "random_password" "this" {
-  length           = 16
-  special          = true
-  override_special = "(+%><"
-}
-
-resource "azurerm_key_vault_secret" "db-secret" {
-  name         = "wiki"
-  value        = random_password.this.result
-  key_vault_id = azurerm_key_vault.kv.id
-  depends_on = [
-    azurerm_key_vault_access_policy.policy
-  ]
+  key_vault_id = data.azurerm_key_vault.this.id
   lifecycle {
     ignore_changes = [value]
   }
@@ -149,7 +117,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
 }
 
 resource "azurerm_key_vault_access_policy" "vmpolicy" {
-  key_vault_id       = azurerm_key_vault.kv.id
+  key_vault_id       = data.azurerm_key_vault.this.id
   tenant_id          = data.azurerm_client_config.current.tenant_id
   object_id          = azurerm_linux_virtual_machine.vm.identity[0].principal_id
   secret_permissions = ["get", "set", "list"]
@@ -164,13 +132,12 @@ resource "azurerm_virtual_machine_extension" "custom_script" {
   auto_upgrade_minor_version = false
   settings                   = <<SETTINGS
   {
-    "script": "${base64encode(templatefile("install.sh", { KEY_VAULT = "${azurerm_key_vault.kv.name}", db_root_password = "" }))}"
+    "script": "${base64encode(templatefile("install.sh", { KEY_VAULT = "${data.azurerm_key_vault.this.name}" }))}"
   }
   SETTINGS
 
   depends_on = [
-    azurerm_key_vault_access_policy.vmpolicy,
-    azurerm_key_vault_secret.db-secret
+    azurerm_key_vault_access_policy.vmpolicy
   ]
 }
 

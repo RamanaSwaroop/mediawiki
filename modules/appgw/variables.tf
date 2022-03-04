@@ -21,3 +21,10 @@ variable "vm_name" {
 variable "agw_pip" {
   type = string
 }
+
+variable "agw_sku" {
+  type = object({
+    name = string
+    tier = string
+  })
+}

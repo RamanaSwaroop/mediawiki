@@ -20,11 +20,18 @@ module "network" {
   agw-pip             = var.agw_pip
 }
 
+module "kv" {
+  source              = "./modules/keyvault"
+  resource_group_name = var.resource_group_name
+  kv_name             = var.kv_name
+}
+
 module "vm" {
   source = "./modules/vm"
   depends_on = [
     module.rg,
-    module.network
+    module.network,
+    module.kv
   ]
   resource_group_name = var.resource_group_name
   resource_tags       = var.resource_tags
@@ -37,6 +44,7 @@ module "vm" {
   vnet_name           = var.vnet_name
   vm_subnet           = var.vm_subnet
   lb_name             = var.lb_name
+  kv_name             = var.kv_name
 }
 
 module "app-gw" {
@@ -52,15 +60,18 @@ module "app-gw" {
   vnet_name           = var.vnet_name
   vm_name             = var.vm_name
   agw_pip             = var.agw_pip
+  agw_sku             = var.agw_sku
 }
 
 module "mariadb" {
   source = "./modules/mariadb"
   depends_on = [
     module.rg,
-    module.network
+    module.network,
+    module.kv
   ]
   resource_group_name = var.resource_group_name
   mariadb_server_name = var.mariadb_server_name
   mariadb_name        = var.mariadb_name
+  kv_name             = var.kv_name
 }

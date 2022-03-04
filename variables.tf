@@ -97,3 +97,14 @@ variable "mariadb_server_name" {
 variable "mariadb_name" {
   type = string
 }
+
+variable "kv_name" {
+  type = string
+}
+
+variable "agw_sku" {
+  type = object({
+    name = string
+    tier = string
+  })
+}

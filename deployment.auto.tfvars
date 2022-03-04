@@ -120,3 +120,10 @@ script_path = "install.sh"
 mariadb_server_name = "mediawikiserver0403"
 
 mariadb_name = "wikidatabase"
+
+kv_name = "wiki45ded292afkv"
+
+agw_sku = {
+  name = "Standard_v2"
+  tier = "Standard_v2"
+}

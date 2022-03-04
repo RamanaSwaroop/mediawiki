@@ -41,3 +41,7 @@ variable "vm_subnet" {
 variable "lb_name" {
   type = string
 }
+
+variable "kv_name" {
+  type = string
+}

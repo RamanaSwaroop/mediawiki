@@ -34,8 +34,8 @@ resource "azurerm_application_gateway" "this" {
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = data.azurerm_resource_group.rg.location
   sku {
-    name     = "Standard_Small"
-    tier     = "Standard"
+    name     = var.agw_sku.name
+    tier     = var.agw_sku.tier
     capacity = 1
   }
   gateway_ip_configuration {

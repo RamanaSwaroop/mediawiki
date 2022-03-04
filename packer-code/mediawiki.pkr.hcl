@@ -58,7 +58,7 @@ build {
 
   provisioner "shell" {
     execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"
-    inline          = ["dnf upgrade -y", "dnf install telnet openssl jq httpd php php-mysqlnd php-gd php-xml mariadb-server mariadb php-mbstring php-json mod_ssl php-intl php-apcu -y", "cd /root", "wget https://releases.wikimedia.org/mediawiki/1.34/mediawiki-1.34.4.tar.gz", "mkdir /var/www/mediawiki-1.34.4", "ln -s /var/www/mediawiki-1.34.4 /var/www/mediawiki", "cd /var/www", "tar -zxf /root/mediawiki-1.34.4.tar.gz ", "chown -R apache:apache /var/www/mediawiki", "chown -R apache:apache /var/www/mediawiki-1.34.4", "mv /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.conf_bak", "mv /tmp/httpd.conf /etc/httpd/conf/httpd.conf", "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"]
+    inline          = ["dnf upgrade -y", "dnf install telnet openssl jq httpd php php-mysqlnd php-gd php-xml php-mbstring php-json mod_ssl php-intl php-apcu -y", "cd /root", "wget https://releases.wikimedia.org/mediawiki/1.34/mediawiki-1.34.4.tar.gz", "mkdir /var/www/mediawiki-1.34.4", "ln -s /var/www/mediawiki-1.34.4 /var/www/mediawiki", "cd /var/www", "tar -zxf /root/mediawiki-1.34.4.tar.gz ", "chown -R apache:apache /var/www/mediawiki", "chown -R apache:apache /var/www/mediawiki-1.34.4", "mv /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.conf_bak", "mv /tmp/httpd.conf /etc/httpd/conf/httpd.conf", "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"]
     inline_shebang  = "/bin/sh -x"
   }
 
